@@ -6,6 +6,10 @@
   vars:
     guid: "{{ lookup('ENV','GUID') }}"
   tasks:
+    - name: Set Fact guid
+      set_fact:
+        guid: "{{ lookup('ENV','GUID') }}"
+  
     - name: Include Instance variables
       include_vars: instances_vars.yml
       

@@ -10,7 +10,7 @@
       include_vars: instances_vars.yml
       
     - debug: 
-        var: "{{ guid }}"  
+        var: guid 
 
     - name: Create Instance
       openstack.cloud.server:

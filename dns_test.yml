@@ -1,6 +1,6 @@
 - name: Deploy, configure, and populate Postgres 10
   hosts: all
-  become: true
+  become: false
   gather_facts: true
   
   tasks:

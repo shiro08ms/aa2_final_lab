@@ -29,6 +29,11 @@
         nics:
           - net-name: "{{ instance.internal_network }}"
         meta: "AnsibleGroup={{instance.metadata.AnsibleGroup}},deployment_name={{instance.metadata.deployment_name}}"
+        userdata: |
+          {%- raw -%}#!/bin/bash
+          echo "  nameserver {{hostvars.localhost.ansible_default_ipv4.address}} {%- raw -%}" >> /etc/resolv.conf
+          ifdown eth0 && ifup eth0
+          {% endraw %}
       loop: "{{ instances }}"
       loop_control:
         loop_var: instance

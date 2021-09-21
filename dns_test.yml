@@ -1,0 +1,10 @@
+- name: Deploy, configure, and populate Postgres 10
+  hosts: all
+  become: true
+  gather_facts: true
+  
+  tasks:
+
+    - name: debug dns dynamic vars
+      debug:
+       var: "{{hostvars.localhost.ansible_default_ipv4.address}}"

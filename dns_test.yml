@@ -7,4 +7,4 @@
 
     - name: debug dns dynamic vars
       debug:
-       var: "{{hostvars.localhost.ansible_default_ipv4.address}}"
+       msg: "{{hostvars.localhost.ansible_default_ipv4.address}}"

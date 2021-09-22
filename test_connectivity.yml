@@ -21,6 +21,7 @@
   hosts: osp_instances
   gather_facts: false
   become: yes
+  become_user: devops
   #tasks:
   #  - name: test ping
   #    ping:

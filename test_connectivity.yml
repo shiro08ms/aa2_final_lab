@@ -1,6 +1,7 @@
 ---
 - name: Building inventory
-  hosts: control_node
+  #hosts: control_node
+  hosts: localhost
   tasks:
     - name: Fetch Instance Info
       os_server_info:

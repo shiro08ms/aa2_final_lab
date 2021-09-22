@@ -20,6 +20,106 @@
 - name: Test connectivity
   hosts: osp_instances
   gather_facts: false
+  #tasks:
+  #  - name: test ping
+  #    ping:
+
+  vars:
+    service_user_name: devops
+    service_user_password: redhat
+    ssh_key_path: /home/devops/.ssh/
+    ssh_key_name: id_rsa
+    satellite_activationkey: gpte-labs-rhel8
+    satellite_org: prod
+
   tasks:
-    - name: test ping
-      ping:
+    - name: Gather network facts
+      setup:
+        gather_subset:
+          - 'network'
+      delegate_facts: true
+      delegate_to: localhost
+      connection: local
+
+    - name: DNS IP updated
+      lineinfile:
+        state: present
+        path: /etc/sysconfig/network-scripts/ifcfg-eth0
+        line: "{{ item }}"
+      loop:
+        - PEERDNS=no
+        - DNS1={{ hostvars.localhost.ansible_default_ipv4.address }}
+      register: network_update
+
+    - name: restart network manager
+      service:
+        name: NetworkManager
+        state: restarted
+      when: network_update.changed | bool
+
+    - name: install katello-ca-consumer package
+      yum:
+        name: http://satellite.example.com/pub/katello-ca-consumer-latest.noarch.rpm
+        state: present
+        disable_gpg_check: true
+
+    - name: register system and attach subs
+      redhat_subscription:
+        state: present
+        activationkey: "{{ satellite_activationkey }}"
+        org_id: "{{ satellite_org }}"
+        auto_attach: true
+
+    - name: Create Service User Account
+      user:
+        name: "{{ service_user_name }}"
+        comment: Service User Account
+        password: "{{ service_user_password | default(omit) | password_hash('sha512') }}"
+        state: present
+
+    - name: enable sudo privilege
+      copy:
+        content: "{{ service_user_name }} ALL=(ALL) NOPASSWD:ALL"
+        dest: '/etc/sudoers.d/{{ service_user_name }}-service-account'
+
+    - name: check if ssh key exist
+      stat:
+        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
+      register: ssh_pub_key
+      delegate_to: localhost
+
+    - name: Generate ssh key pair
+      when: not ssh_pub_key.stat.exists
+      openssh_keypair:
+        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
+        owner: devops
+        group: users
+        mode: 0400
+      delegate_to: localhost
+      connection: local
+
+    - name: add public key
+      authorized_key:
+        user: "{{ service_user_name }}"
+        key: "{{ lookup('file', '{{ ssh_key_path }}/{{ ssh_key_name }}.pub') }}"
+        state: present
+
+    - name: Disable root login
+      lineinfile:
+        line: PermitRootLogin no
+        regexp: '^ *PermitRootLogin'
+        path: /etc/ssh/sshd_config
+      notify: restart ssh
+
+    - name: disable password based authentication
+      lineinfile:
+        line: PasswordAuthentication no
+        regexp: '^ *PasswordAuthentication'
+        path: /etc/ssh/sshd_config
+      notify: restart ssh
+
+  handlers:
+    - name: restart ssh
+      service:
+        name: sshd
+        state: restarted

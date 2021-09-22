@@ -20,6 +20,7 @@
 - name: Test connectivity
   hosts: osp_instances
   gather_facts: false
+  become: yes
   #tasks:
   #  - name: test ping
   #    ping:

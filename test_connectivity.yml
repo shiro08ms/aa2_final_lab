@@ -18,7 +18,7 @@
         loop_var: __instance
 
 - name: Test connectivity
-  hosts: load_balancers,backend_servers,database_servers
+  hosts: osp_instances
   gather_facts: false
   tasks:
     - name: test ping

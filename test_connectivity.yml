@@ -21,7 +21,7 @@
   hosts: osp_instances
   gather_facts: false
   become: yes
-  become_user: devops
+  #become_user: devops
   #tasks:
   #  - name: test ping
   #    ping:
@@ -35,6 +35,11 @@
     satellite_org: prod
 
   tasks:
+    - name: Restart NetworkManager
+      service:
+        name: NetworkManager
+        state: restarted
+
     - name: Gather network facts
       setup:
         gather_subset:

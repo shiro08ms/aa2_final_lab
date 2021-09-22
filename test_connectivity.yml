@@ -63,7 +63,7 @@
       service:
         name: NetworkManager
         state: restarted
-      when: network_update.changed | bool
+    #  when: network_update.changed | bool
 
     - name: install katello-ca-consumer package
       yum:

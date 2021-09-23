@@ -59,7 +59,13 @@
         - PEERDNS=no
         - DNS1={{ hostvars.localhost.ansible_default_ipv4.address }}
       register: network_update
-
+    
+    - name: Update /etc/hosts
+      lineinfile:
+        state: present
+        path: /etc/hosts
+        line: 192.168.50.141 satellite.example.com
+        
     - name: restart network manager
       service:
         name: NetworkManager

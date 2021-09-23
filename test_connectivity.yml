@@ -100,6 +100,8 @@
       stat:
         path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
       register: ssh_pub_key
+      ansible_become: yes
+      ansible_user: devops
       delegate_to: localhost
 
     - name: Generate ssh key pair

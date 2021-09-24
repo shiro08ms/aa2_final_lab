@@ -2,6 +2,11 @@
 - name: Building inventory
   #hosts: control_node
   hosts: localhost
+  vars:
+    service_user_name: devops
+    service_user_password: redhat
+    ssh_key_path: /home/devops/.ssh/
+    ssh_key_name: id_rsa
   tasks:
     - name: Fetch Instance Info
       os_server_info:
@@ -16,6 +21,19 @@
       loop: "{{ r_instances.openstack_servers }}"
       loop_control:
         loop_var: __instance
+        
+    - name: check if ssh key exist
+      stat:
+        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
+      register: ssh_pub_key
+
+    - name: Generate ssh key pair
+      when: not ssh_pub_key.stat.exists
+      openssh_keypair:
+        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
+        owner: devops
+        group: users
+        mode: 0400
 
 - name: Test connectivity
   hosts: osp_instances
@@ -96,14 +114,14 @@
         content: "{{ service_user_name }} ALL=(ALL) NOPASSWD:ALL"
         dest: '/etc/sudoers.d/{{ service_user_name }}-service-account'
 
-    - name: check if ssh key exist
-      stat:
-        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
-      register: ssh_pub_key
+    #- name: check if ssh key exist
+    #  stat:
+    #    path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
+    #  register: ssh_pub_key
     #  become: yes
     #  become_user: devops
-      connection: local
-      delegate_to: localhost
+    #  connection: local
+    #  delegate_to: localhost
 
     - name: Generate ssh key pair
       when: not ssh_pub_key.stat.exists

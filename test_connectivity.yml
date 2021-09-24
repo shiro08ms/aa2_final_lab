@@ -80,20 +80,18 @@
       connection: local
 
     - name: DNS IP updated
-      lineinfile:
+      nmcli:
+        conn_name: 'System eth0'
+        type: ethernet
+        dns2:
+          - 192.168.50.103
         state: present
-        path: /etc/sysconfig/network-scripts/ifcfg-eth0
-        line: "{{ item }}"
-      loop:
-        - PEERDNS=no
-        - DNS1={{ hostvars.localhost.ansible_default_ipv4.address }}
-      register: network_update
 
-    - name: Update /etc/hosts
-      lineinfile:
-        state: present
-        path: /etc/hosts
-        line: 192.168.50.141 satellite.example.com
+#    - name: Update /etc/hosts
+#      lineinfile:
+#        state: present
+#        path: /etc/hosts
+#        line: 192.168.50.141 satellite.example.com
     
     - name: restart network manager
       service:

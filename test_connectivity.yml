@@ -87,11 +87,11 @@
           - 192.168.50.103
         state: present
 
-#    - name: Update /etc/hosts
-#      lineinfile:
-#        state: present
-#        path: /etc/hosts
-#        line: 192.168.50.141 satellite.example.com
+    - name: Update /etc/hosts
+      lineinfile:
+        state: present
+        path: /etc/hosts
+        line: 192.168.50.141 satellite.example.com
     
     - name: restart network manager
       service:

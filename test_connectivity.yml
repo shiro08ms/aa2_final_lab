@@ -35,6 +35,7 @@
         group: users
         mode: 0700
         state: directory
+      become: yes
       
     - name: Generate ssh key pair
       when: not ssh_pub_key.stat.exists
@@ -43,6 +44,7 @@
         owner: devops
         group: users
         mode: 0400
+      become: yes
 
 - name: Test connectivity
   hosts: osp_instances

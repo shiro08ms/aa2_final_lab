@@ -1,54 +1,54 @@
----
-- name: Building inventory
+#---
+#- name: Building inventory
   #hosts: control_node
-  hosts: control
-  vars:
-    service_user_name: devops
-    service_user_password: redhat
-    ssh_key_path: /home/devops/.ssh
-    ssh_key_name: id_rsa
-  tasks:
-    - name: Fetch Instance Info
-      os_server_info:
-        region_name: "{{ openstack_region | default('regionOne') }}"
-      register: r_instances
+#  hosts: control
+#  vars:
+#    service_user_name: devops
+#    service_user_password: redhat
+#    ssh_key_path: /home/devops/.ssh
+#    ssh_key_name: id_rsa
+#  tasks:
+#    - name: Fetch Instance Info
+#      os_server_info:
+#        region_name: "{{ openstack_region | default('regionOne') }}"
+#      register: r_instances
 
-    - name: Add host(s) to inventory
-      add_host:
-        name: "{{ __instance.private_v4 }}"
-        group: 
-          - "{{ __instance.metadata.AnsibleGroup }}"
-      loop: "{{ r_instances.openstack_servers }}"
-      loop_control:
-        loop_var: __instance
+#    - name: Add host(s) to inventory
+#      add_host:
+#        name: "{{ __instance.private_v4 }}"
+#        group: 
+#          - "{{ __instance.metadata.AnsibleGroup }}"
+#      loop: "{{ r_instances.openstack_servers }}"
+#      loop_control:
+#        loop_var: __instance
         
-    - name: check if ssh key exist
-      stat:
-        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
-      register: ssh_pub_key
-      become: yes
+#    - name: check if ssh key exist
+#      stat:
+#        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
+#      register: ssh_pub_key
+#      become: yes
     
-    - name: Create ssh key folder
-      when: not ssh_pub_key.stat.exists
-      file:
-        path: '{{ ssh_key_path }}/{{ ssh_key_name }}'
-        owner: devops
-        group: users
-        mode: 0700
-        state: directory
-      become: yes
+#    - name: Create ssh key folder
+#      when: not ssh_pub_key.stat.exists
+#      file:
+#        path: '{{ ssh_key_path }}/{{ ssh_key_name }}'
+#        owner: devops
+#        group: users
+#        mode: 0700
+#        state: directory
+#      become: yes
       
-    - name: Generate ssh key pair
-      when: not ssh_pub_key.stat.exists
-      openssh_keypair:
-        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
-        owner: devops
-        group: users
-        mode: 0400
-      become: yes
-
+#    - name: Generate ssh key pair
+#      when: not ssh_pub_key.stat.exists
+#      openssh_keypair:
+#        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
+#        owner: devops
+#        group: users
+#        mode: 0400
+#      become: yes
+---
 - name: Test connectivity
-  hosts: osp_instances
+  hosts: meta-AnsibleGroup_osp_instances
   gather_facts: false
   become: yes
   #become_user: devops

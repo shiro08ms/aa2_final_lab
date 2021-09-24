@@ -100,8 +100,8 @@
       stat:
         path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
       register: ssh_pub_key
-      become: yes
-      become_user: devops
+    #  become: yes
+    #  become_user: devops
       delegate_to: localhost
 
     - name: Generate ssh key pair

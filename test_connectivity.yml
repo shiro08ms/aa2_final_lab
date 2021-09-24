@@ -5,7 +5,7 @@
   vars:
     service_user_name: devops
     service_user_password: redhat
-    ssh_key_path: /home/devops/.ssh/
+    ssh_key_path: /home/devops/.ssh
     ssh_key_name: id_rsa
   tasks:
     - name: Fetch Instance Info
@@ -26,7 +26,16 @@
       stat:
         path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
       register: ssh_pub_key
-
+    
+    - name: Create ssh key folder
+      when: not ssh_pub_key.stat.exists
+      file:
+        path: '{{ ssh_key_path }}/{{ ssh_key_name }}'
+        owner: devops
+        group: users
+        mode: 0700
+        state: directory
+      
     - name: Generate ssh key pair
       when: not ssh_pub_key.stat.exists
       openssh_keypair:

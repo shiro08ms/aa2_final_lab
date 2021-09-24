@@ -1,7 +1,7 @@
 ---
 - name: Building inventory
   #hosts: control_node
-  hosts: towerfl
+  hosts: control
   vars:
     service_user_name: devops
     service_user_password: redhat

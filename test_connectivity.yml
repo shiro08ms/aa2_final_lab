@@ -26,6 +26,7 @@
       stat:
         path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
       register: ssh_pub_key
+      become: yes
     
     - name: Create ssh key folder
       when: not ssh_pub_key.stat.exists

@@ -1,0 +1,10 @@
+---
+- name: Deploy, configure, and populate Postgres 10
+  hosts: appdb1
+  become: true
+  gather_facts: false
+  tags:
+    - database_servers
+  tasks:
+  - include_role:
+      name: PostgreSQL

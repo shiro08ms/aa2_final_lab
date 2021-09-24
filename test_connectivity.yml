@@ -123,15 +123,15 @@
     #  connection: local
     #  delegate_to: localhost
 
-    - name: Generate ssh key pair
-      when: not ssh_pub_key.stat.exists
-      openssh_keypair:
-        path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
-        owner: devops
-        group: users
-        mode: 0400
-      delegate_to: localhost
-      connection: local
+   # - name: Generate ssh key pair
+   #   when: not ssh_pub_key.stat.exists
+   #   openssh_keypair:
+    #    path: "{{ ssh_key_path }}/{{ ssh_key_name }}"
+    #    owner: devops
+    #    group: users
+    #    mode: 0400
+    #  delegate_to: localhost
+    #  connection: local
 
     - name: add public key
       authorized_key:

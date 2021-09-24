@@ -145,34 +145,34 @@
     #  delegate_to: localhost
     #  connection: local
 
-    - name: copy public key to instance
-      copy:
-        src: '{{ ssh_key_path }}/{{ ssh_key_name }}.pub'
-        dest: '{{ ssh_key_path }}/{{ ssh_key_name }}.pub'
-        directory_mode: yes
+#    - name: copy public key to instance
+#      copy:
+#        src: '{{ ssh_key_path }}/{{ ssh_key_name }}.pub'
+#        dest: '{{ ssh_key_path }}/{{ ssh_key_name }}.pub'
+#        directory_mode: yes
 
-    - name: add public key
-      authorized_key:
-        user: "{{ service_user_name }}"
-        key: "{{ lookup('file', '{{ ssh_key_path }}/{{ ssh_key_name }}.pub') }}"
-        state: present
+#    - name: add public key
+#      authorized_key:
+#        user: "{{ service_user_name }}"
+#        key: "{{ lookup('file', '{{ ssh_key_path }}/{{ ssh_key_name }}.pub') }}"
+#        state: present
 
-    - name: Disable root login
-      lineinfile:
-        line: PermitRootLogin no
-        regexp: '^ *PermitRootLogin'
-        path: /etc/ssh/sshd_config
-      notify: restart ssh
+#    - name: Disable root login
+#      lineinfile:
+#        line: PermitRootLogin no
+#        regexp: '^ *PermitRootLogin'
+#        path: /etc/ssh/sshd_config
+#      notify: restart ssh
 
-    - name: disable password based authentication
-      lineinfile:
-        line: PasswordAuthentication no
-        regexp: '^ *PasswordAuthentication'
-        path: /etc/ssh/sshd_config
-      notify: restart ssh
+#    - name: disable password based authentication
+#      lineinfile:
+#        line: PasswordAuthentication no
+#        regexp: '^ *PasswordAuthentication'
+#        path: /etc/ssh/sshd_config
+#      notify: restart ssh
 
-  handlers:
-    - name: restart ssh
-      service:
-        name: sshd
-        state: restarted
+#  handlers:
+#    - name: restart ssh
+#      service:
+#        name: sshd
+#        state: restarted

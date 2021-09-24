@@ -145,6 +145,12 @@
     #  delegate_to: localhost
     #  connection: local
 
+    - name: copy public key to instance
+      copy:
+        src: '{{ ssh_key_path }}/{{ ssh_key_name }}.pub'
+        dest: '{{ ssh_key_path }}/{{ ssh_key_name }}.pub'
+        directory_mode: yes
+
     - name: add public key
       authorized_key:
         user: "{{ service_user_name }}"
